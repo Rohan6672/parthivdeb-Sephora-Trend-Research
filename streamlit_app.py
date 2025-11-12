@@ -2,16 +2,28 @@ from __future__ import annotations
 
 import random
 import uuid
+import os
 from datetime import datetime, timezone
 from textwrap import dedent
 from typing import Any, Dict, List
 
 import streamlit as st
 import requests
+from dotenv import load_dotenv
 
+# Load environment variables
+load_dotenv()
 
-API_BASE_URL = "http://localhost:8000"
-API_TIMEOUT = 300  # 5 minutes for AI trend discovery
+# --- Configuration ---
+deployment_mode = os.getenv('deployment_mode', 'local')
+if deployment_mode == 'docker':
+    API_BASE_URL = os.getenv('DOCKER_FASTAPI_BASE_URL', 'http://backend:8000')
+elif deployment_mode == 'local':
+    API_BASE_URL = os.getenv('LOCAL_FASTAPI_BASE_URL', 'http://localhost:8000')
+else:
+    API_BASE_URL = 'http://localhost:8000'  # Fallback
+
+API_TIMEOUT = int(os.getenv('API_TIMEOUT', '300'))  # 5 minutes for AI trend discovery
 
 Trend = Dict[str, Any]
 
